@@ -1,4 +1,4 @@
-import 'package:edu_play/screens/onboarding_screen.dart';
+import 'package:dragon_deals/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,23 +9,22 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EduPlay',
+      title: 'Dragon Deals',
       theme: ThemeData(
         // Define the default brightness and colors.
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3B82F6), // Primary: Sky Blue
-          primary: const Color(0xFF3B82F6),
-          secondary: const Color(0xFFFACC15), // Accent: Warm Yellow
-          error: const Color(0xFFF87171), // Secondary: Coral Red
+          seedColor: const Color(0xFFFF3B30), // Primary: Red
+          primary: const Color(0xFFFF3B30),
+          secondary: const Color(0xFF2B2D42), // Secondary: Dark Navy
+          error: const Color(0xFFF87171),
           // Other colors can be defined here as needed
         ),
 
         // Define the default font family.
-        textTheme: GoogleFonts.nunitoTextTheme(
+        textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
 

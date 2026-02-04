@@ -1,9 +1,7 @@
 package com.soulstice.app.data.local.dao
 
 import androidx.room.*
-import com.soulstice.app.data.local.entities.Habit
-import com.soulstice.app.data.local.entities.Project
-import com.soulstice.app.data.local.entities.Task
+import com.soulstice.app.data.local.entities.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao

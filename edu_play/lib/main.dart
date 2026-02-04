@@ -1,39 +1,87 @@
-import 'package:edu_play/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const SoulsticeApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SoulsticeApp extends StatelessWidget {
+  const SoulsticeApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EduPlay',
+      title: 'Soulstice',
       theme: ThemeData(
-        // Define the default brightness and colors.
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3B82F6), // Primary: Sky Blue
-          primary: const Color(0xFF3B82F6),
-          secondary: const Color(0xFFFACC15), // Accent: Warm Yellow
-          error: const Color(0xFFF87171), // Secondary: Coral Red
-          // Other colors can be defined here as needed
-        ),
-
-        // Define the default font family.
-        textTheme: GoogleFonts.nunitoTextTheme(
-          Theme.of(context).textTheme,
-        ),
-
-        // Use Material 3 design.
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF8A9A5B), // Sage Green
+          primary: const Color(0xFF8A9A5B),
+          secondary: const Color(0xFFC07A50), // Clay Orange
+          tertiary: const Color(0xFF483C32),  // Taupe
+          surface: const Color(0xFFFDFBF7),   // Neutral/Cream
+        ),
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        ).copyWith(
+          displayLarge: GoogleFonts.playfairDisplay(
+            textStyle: Theme.of(context).textTheme.displayLarge,
+            fontWeight: FontWeight.bold,
+          ),
+          displayMedium: GoogleFonts.playfairDisplay(
+            textStyle: Theme.of(context).textTheme.displayMedium,
+            fontWeight: FontWeight.bold,
+          ),
+          displaySmall: GoogleFonts.playfairDisplay(
+            textStyle: Theme.of(context).textTheme.displaySmall,
+            fontWeight: FontWeight.bold,
+          ),
+          headlineLarge: GoogleFonts.playfairDisplay(
+            textStyle: Theme.of(context).textTheme.headlineLarge,
+            fontWeight: FontWeight.bold,
+          ),
+          headlineMedium: GoogleFonts.playfairDisplay(
+            textStyle: Theme.of(context).textTheme.headlineMedium,
+            fontWeight: FontWeight.bold,
+          ),
+          headlineSmall: GoogleFonts.playfairDisplay(
+            textStyle: Theme.of(context).textTheme.headlineSmall,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      home: const OnboardingScreen(),
+      home: const PlaceholderHomeScreen(),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class PlaceholderHomeScreen extends StatelessWidget {
+  const PlaceholderHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Soulstice',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Welcome to Soulstice',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: 20),
+            const Text('Core Data Architecture Foundation is being built...'),
+          ],
+        ),
+      ),
     );
   }
 }

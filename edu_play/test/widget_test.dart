@@ -10,21 +10,23 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_play/main.dart';
 
+import 'package:edu_play/services/user_provider.dart';
+import 'package:provider/provider.dart';
+
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Onboarding screen smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserProvider()),
+        ],
+        child: const MyApp(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that onboarding screen is shown.
+    expect(find.text('Welcome to EduPlay!'), findsOneWidget);
+    expect(find.text('Join as Student'), findsOneWidget);
   });
 }

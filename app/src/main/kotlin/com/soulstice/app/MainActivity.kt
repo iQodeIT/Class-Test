@@ -18,8 +18,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulstice.app.ui.screens.*
 import com.soulstice.app.ui.theme.*
+import com.soulstice.app.ui.viewmodel.InboxViewModel
+import com.soulstice.app.ui.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,14 +50,19 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     object Focus : Screen("focus", "Focus Timer", Icons.Default.Timer)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
     object Review : Screen("review", "Daily Review", Icons.Default.AutoAwesome)
+    object ProjectDetail : Screen("project_detail/{projectId}", "Project Detail", Icons.Default.GridView)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    taskViewModel: TaskViewModel = hiltViewModel(),
+    inboxViewModel: InboxViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    var showQuickCapture by remember { mutableStateOf(false) }
 
     val items = listOf(
         Screen.Dashboard,
@@ -73,6 +81,16 @@ fun MainScreen() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    if (showQuickCapture) {
+        QuickCaptureDialog(
+            onDismiss = { showQuickCapture = false },
+            onCapture = { text ->
+                inboxViewModel.addItem(text)
+                showQuickCapture = false
+            }
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -107,6 +125,15 @@ fun MainScreen() {
         }
     ) {
         Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { showQuickCapture = true },
+                    containerColor = Sage600,
+                    contentColor = androidx.compose.ui.graphics.Color.White
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Quick Capture")
+                }
+            },
             topBar = {
                 CenterAlignedTopAppBar(
                     title = { Text("Soulstice") },
@@ -123,7 +150,15 @@ fun MainScreen() {
             NavHost(navController, startDestination = Screen.Dashboard.route, Modifier.padding(innerPadding)) {
                 composable(Screen.Dashboard.route) { DashboardScreen() }
                 composable(Screen.Inbox.route) { InboxScreen() }
-                composable(Screen.Projects.route) { ProjectsScreen() }
+                composable(Screen.Projects.route) {
+                    ProjectsScreen(onProjectClick = { projectId ->
+                        navController.navigate("project_detail/$projectId")
+                    })
+                }
+                composable(Screen.ProjectDetail.route) { backStackEntry ->
+                    val projectId = backStackEntry.arguments?.getString("projectId") ?: ""
+                    ProjectDetailScreen(projectId = projectId)
+                }
                 composable(Screen.CreativeStudio.route) { CreativeStudioScreen() }
                 composable(Screen.BusinessHub.route) { BusinessHubScreen() }
                 composable(Screen.KnowledgeBase.route) { KnowledgeBaseScreen() }
@@ -136,4 +171,32 @@ fun MainScreen() {
             }
         }
     }
+}
+
+@Composable
+fun QuickCaptureDialog(onDismiss: () -> Unit, onCapture: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Quick Capture") },
+        text = {
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                placeholder = { Text("What's on your mind?") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            Button(onClick = { if (text.isNotBlank()) onCapture(text) }) {
+                Text("Capture")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

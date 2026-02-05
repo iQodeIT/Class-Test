@@ -9,6 +9,7 @@ data class Task(
     val title: String,
     val description: String?,
     val status: String, // "todo", "in_progress", "done"
+    val type: String = "task", // "task", "idea"
     val priority: String, // "low", "medium", "high"
     val energy: String, // "low", "high"
     val projectId: String?,

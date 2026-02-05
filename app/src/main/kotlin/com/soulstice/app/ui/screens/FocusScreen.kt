@@ -18,24 +18,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulstice.app.ui.theme.*
-import kotlinx.coroutines.delay
+import com.soulstice.app.ui.viewmodel.FocusViewModel
 
 @Composable
-fun FocusScreen() {
-    var timeLeft by remember { mutableLongStateOf(25 * 60 * 1000L) }
-    var isRunning by remember { mutableStateOf(false) }
+fun FocusScreen(
+    viewModel: FocusViewModel = hiltViewModel()
+) {
+    val timeLeft by viewModel.timeLeft.collectAsState()
+    val isRunning by viewModel.isRunning.collectAsState()
+    val sessionsToday by viewModel.sessionsToday.collectAsState(initial = 0)
     val totalTime = 25 * 60 * 1000L
-
-    LaunchedEffect(isRunning) {
-        if (isRunning) {
-            while (timeLeft > 0) {
-                delay(1000L)
-                timeLeft -= 1000L
-            }
-            isRunning = false
-        }
-    }
 
     val minutes = (timeLeft / 1000) / 60
     val seconds = (timeLeft / 1000) % 60
@@ -53,7 +47,7 @@ fun FocusScreen() {
             color = Taupe900
         )
         Text(
-            text = "Deep work in progress",
+            text = if (isRunning) "Deep work in progress" else "Ready to focus?",
             style = MaterialTheme.typography.bodyMedium,
             color = Taupe500
         )
@@ -99,17 +93,14 @@ fun FocusScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = {
-                    isRunning = false
-                    timeLeft = 25 * 60 * 1000L
-                },
+                onClick = { viewModel.resetTimer() },
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(Icons.Default.Refresh, contentDescription = "Reset", tint = Taupe500)
             }
 
             LargeFloatingActionButton(
-                onClick = { isRunning = !isRunning },
+                onClick = { viewModel.toggleTimer() },
                 containerColor = Sage600,
                 contentColor = Color.White,
                 shape = CircleShape
@@ -122,10 +113,9 @@ fun FocusScreen() {
             }
 
             IconButton(
-                onClick = { /* Settings */ },
+                onClick = { /* Skip */ },
                 modifier = Modifier.size(48.dp)
             ) {
-                // Placeholder for settings or skip
                 Text("SKIP", color = Taupe500, fontWeight = FontWeight.Bold, fontSize = 12.sp)
             }
         }
@@ -133,7 +123,7 @@ fun FocusScreen() {
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = "Today: 4 sessions completed",
+            text = "Today: $sessionsToday sessions completed",
             style = MaterialTheme.typography.bodySmall,
             color = Taupe500
         )

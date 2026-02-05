@@ -12,13 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulstice.app.ui.components.SoulsticeButton
 import com.soulstice.app.ui.components.SoulsticeCard
 import com.soulstice.app.ui.components.SoulsticeInput
 import com.soulstice.app.ui.theme.*
+import com.soulstice.app.ui.viewmodel.JournalViewModel
 
 @Composable
-fun ReviewScreen() {
+fun ReviewScreen(
+    viewModel: JournalViewModel = hiltViewModel()
+) {
     var step by remember { mutableIntStateOf(1) }
     var reflection by remember { mutableStateOf("") }
 
@@ -90,7 +94,12 @@ fun ReviewScreen() {
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     SoulsticeButton(text = "Back", onClick = { step = 2 }, variant = "outline", modifier = Modifier.weight(1f))
-                    SoulsticeButton(text = "Complete Shutdown", onClick = { step = 4 }, modifier = Modifier.weight(1f))
+                    SoulsticeButton(text = "Complete Shutdown", onClick = {
+                        if (reflection.isNotBlank()) {
+                            viewModel.addEntry(reflection, isWin = true)
+                        }
+                        step = 4
+                    }, modifier = Modifier.weight(1f))
                 }
             }
             4 -> {

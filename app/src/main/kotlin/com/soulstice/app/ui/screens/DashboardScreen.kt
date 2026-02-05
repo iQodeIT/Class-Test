@@ -18,16 +18,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.soulstice.app.data.local.entities.Habit
 import com.soulstice.app.ui.components.SoulsticeCard
 import com.soulstice.app.ui.theme.*
 import com.soulstice.app.ui.viewmodel.DashboardViewModel
+import com.soulstice.app.ui.viewmodel.HabitViewModel
 
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = hiltViewModel(),
+    habitViewModel: HabitViewModel = hiltViewModel()
 ) {
     val energyLevel by viewModel.energyLevel.collectAsState()
-    val tasks by viewModel.tasks.collectAsState(initial = emptyList())
+    val activeTasks by viewModel.activeTasks.collectAsState(initial = emptyList())
+    val todayTasks by viewModel.todayTasks.collectAsState(initial = emptyList())
+    val incubatorIdeas by viewModel.incubatorIdeas.collectAsState(initial = emptyList())
+    val businessLeads by viewModel.businessLeads.collectAsState(initial = emptyList())
+    val globalProgress by viewModel.globalProgress.collectAsState(initial = 0f)
+    val velocity by viewModel.velocity.collectAsState(initial = emptyList())
+    val averageVelocity by viewModel.averageVelocity.collectAsState(initial = 0f)
+    val habitsWithStatus by habitViewModel.habitsWithStatus.collectAsState(initial = emptyList())
 
     Column(
         modifier = Modifier
@@ -77,10 +87,10 @@ fun DashboardScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Global Progress", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
-                    Text("64%", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                    Text("${(globalProgress * 100).toInt()}%", color = Color.White, style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     LinearProgressIndicator(
-                        progress = 0.64f,
+                        progress = globalProgress,
                         modifier = Modifier.fillMaxWidth().height(4.dp).clip(CircleShape),
                         color = Color.White,
                         trackColor = Color.White.copy(alpha = 0.2f)
@@ -93,16 +103,17 @@ fun DashboardScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("7-Day Velocity", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
-                    Text("14 pts/avg", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                    Text("${String.format("%.1f", averageVelocity)} pts/day", color = Color.White, style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
-                    // Placeholder for a simple sparkline/velocity chart
+                    // Bars based on real velocity data
                     Row(
                         modifier = Modifier.fillMaxWidth().height(20.dp),
                         horizontalArrangement = Arrangement.spacedBy(2.dp),
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        listOf(0.4f, 0.7f, 0.5f, 0.9f, 0.6f, 0.8f, 1f).forEach { height ->
-                            Box(modifier = Modifier.weight(1f).fillMaxHeight(height).background(Color.White.copy(alpha = 0.6f)))
+                        val max = (velocity.maxOrNull() ?: 1).toFloat()
+                        velocity.forEach { count ->
+                            Box(modifier = Modifier.weight(1f).fillMaxHeight(if (max > 0) count / max else 0.1f).background(Color.White.copy(alpha = 0.6f)))
                         }
                     }
                 }
@@ -117,6 +128,7 @@ fun DashboardScreen(
         ) {
             // Habits Tracker Section
             item {
+                val maxStreak = if (habitsWithStatus.isEmpty()) 0 else habitsWithStatus.maxOf { it.streak }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -127,18 +139,27 @@ fun DashboardScreen(
                         style = MaterialTheme.typography.titleLarge,
                         color = Taupe900
                     )
-                    Text("🔥 12 day streak", color = Clay800, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    if (maxStreak > 1) {
+                        Text("🔥 $maxStreak day streak", color = Clay800, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    HabitIcon(icon = Icons.Default.WaterDrop, completed = true, label = "Hydrate")
-                    HabitIcon(icon = Icons.Default.SelfImprovement, completed = true, label = "Meditation")
-                    HabitIcon(icon = Icons.Default.MenuBook, completed = false, label = "Read")
-                    HabitIcon(icon = Icons.Default.FitnessCenter, completed = false, label = "Workout")
-                    HabitIcon(icon = Icons.Default.Lightbulb, completed = false, label = "Review")
+                if (habitsWithStatus.isEmpty()) {
+                    Text("No habits tracked. Add some in Habits library.", color = Taupe500, fontSize = 14.sp)
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        habitsWithStatus.take(5).forEach { status ->
+                            HabitIcon(
+                                icon = Icons.Default.Star, // Default icon
+                                completed = status.isCompletedToday,
+                                label = status.habit.title,
+                                onClick = { habitViewModel.completeHabit(status.habit) }
+                            )
+                        }
+                    }
                 }
             }
 
@@ -151,9 +172,20 @@ fun DashboardScreen(
                         color = Taupe900
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        ScheduleItem(time = "09:00", title = "Deep Work: UI Design", subtitle = "2 hours • ⚡️ High Energy", completed = true)
-                        ScheduleItem(time = "11:30", title = "Team Sync", subtitle = "30 mins • 🔋 Low Energy", completed = false)
+                    if (todayTasks.isEmpty()) {
+                        Text("No tasks scheduled for today.", color = Taupe500, fontSize = 14.sp)
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            todayTasks.forEach { task ->
+                                ScheduleItem(
+                                    time = "Today",
+                                    title = task.title,
+                                    subtitle = "${task.priority.capitalize()} • ${if (task.energy == "high") "⚡️" else "🔋"}",
+                                    completed = task.status == "done",
+                                    onClick = { viewModel.completeTask(task) }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -166,9 +198,19 @@ fun DashboardScreen(
                         color = Taupe900
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        ActiveTaskItem(title = "Refactor Data Architecture", project = "Soulstice", energy = "High")
-                        ActiveTaskItem(title = "Update Brand Guidelines", project = "Creative Studio", energy = "High")
+                    if (activeTasks.isEmpty()) {
+                        Text("No active tasks.", color = Taupe500, fontSize = 14.sp)
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            activeTasks.forEach { task ->
+                                ActiveTaskItem(
+                                    title = task.title,
+                                    project = task.projectId ?: "No Project",
+                                    energy = task.energy.capitalize(),
+                                    onClick = { viewModel.completeTask(task) }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -183,8 +225,13 @@ fun DashboardScreen(
                             color = Taupe900
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        IncubatorItem("Podcast Idea")
-                        IncubatorItem("New UI Kit")
+                        if (incubatorIdeas.isEmpty()) {
+                            Text("No ideas yet.", color = Taupe500, fontSize = 12.sp)
+                        } else {
+                            incubatorIdeas.forEach { idea ->
+                                IncubatorItem(idea.title)
+                            }
+                        }
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
@@ -193,8 +240,13 @@ fun DashboardScreen(
                             color = Taupe900
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        LeadItem("Follow up: Acme Corp")
-                        LeadItem("Draft Proposal")
+                        if (businessLeads.isEmpty()) {
+                            Text("No leads yet.", color = Taupe500, fontSize = 12.sp)
+                        } else {
+                            businessLeads.forEach { lead ->
+                                LeadItem(lead.name)
+                            }
+                        }
                     }
                 }
             }
@@ -207,8 +259,10 @@ fun DashboardScreen(
 }
 
 @Composable
-fun ActiveTaskItem(title: String, project: String, energy: String) {
-    SoulsticeCard(modifier = Modifier.fillMaxWidth()) {
+fun ActiveTaskItem(title: String, project: String, energy: String, onClick: () -> Unit = {}) {
+    SoulsticeCard(
+        modifier = Modifier.fillMaxWidth().clickable { onClick() }
+    ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -237,13 +291,14 @@ fun LeadItem(title: String) {
 }
 
 @Composable
-fun HabitIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, completed: Boolean, label: String) {
+fun HabitIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, completed: Boolean, label: String, onClick: () -> Unit = {}) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
-                .background(if (completed) Sage500 else Taupe100),
+                .background(if (completed) Sage500 else Taupe100)
+                .clickable { onClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -259,8 +314,10 @@ fun HabitIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, completed: 
 }
 
 @Composable
-fun ScheduleItem(time: String, title: String, subtitle: String, completed: Boolean) {
-    SoulsticeCard(modifier = Modifier.fillMaxWidth()) {
+fun ScheduleItem(time: String, title: String, subtitle: String, completed: Boolean, onClick: () -> Unit = {}) {
+    SoulsticeCard(
+        modifier = Modifier.fillMaxWidth().clickable { onClick() }
+    ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically

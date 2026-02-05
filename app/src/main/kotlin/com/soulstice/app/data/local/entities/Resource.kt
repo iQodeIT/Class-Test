@@ -7,9 +7,10 @@ import androidx.room.PrimaryKey
 data class Resource(
     @PrimaryKey val id: String,
     val title: String,
-    val type: String, // "note", "link", "document"
+    val type: String, // "note", "link", "document", "image"
     val content: String?,
     val url: String?,
+    val localUri: String? = null,
     val projectId: String?,
     val createdAt: Long
 )

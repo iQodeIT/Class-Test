@@ -18,13 +18,25 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Taupe900,
 )
 
+private val DarkColorScheme = darkColorScheme(
+    primary = Sage500,
+    secondary = Clay500,
+    tertiary = Taupe500,
+    background = Color(0xFF1A1C1A),
+    surface = Color(0xFF121412),
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onTertiary = Color.White,
+    onBackground = Sage50,
+    onSurface = Sage50,
+)
+
 @Composable
 fun SoulsticeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // For now, only Light theme as requested by "earth-toned palette"
-    val colorScheme = LightColorScheme
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

@@ -29,7 +29,8 @@ fun FocusScreen(
     val timeLeft by viewModel.timeLeft.collectAsState()
     val isRunning by viewModel.isRunning.collectAsState()
     val sessionsToday by viewModel.sessionsToday.collectAsState(initial = 0)
-    val totalTime = 25 * 60 * 1000L
+    val pomodoroDuration by viewModel.pomodoroDuration.collectAsState(initial = 25)
+    val totalTime = pomodoroDuration * 60 * 1000L
 
     val minutes = (timeLeft / 1000) / 60
     val seconds = (timeLeft / 1000) % 60

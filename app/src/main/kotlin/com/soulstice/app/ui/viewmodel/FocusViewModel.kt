@@ -2,6 +2,7 @@ package com.soulstice.app.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.soulstice.app.data.local.PreferenceManager
 import com.soulstice.app.data.local.dao.SoulsticeDao
 import com.soulstice.app.data.local.entities.FocusSession
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FocusViewModel @Inject constructor(
-    private val dao: SoulsticeDao
+    private val dao: SoulsticeDao,
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     private val _timeLeft = MutableStateFlow(25 * 60 * 1000L)
@@ -23,9 +25,21 @@ class FocusViewModel @Inject constructor(
     private val _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning
 
+    val pomodoroDuration = preferenceManager.pomodoroDuration
+
     val sessionsToday = dao.getFocusSessionCountForDay(getStartOfToday())
 
     private var timerJob: Job? = null
+
+    init {
+        viewModelScope.launch {
+            preferenceManager.pomodoroDuration.collectLatest { minutes ->
+                if (!_isRunning.value) {
+                    _timeLeft.value = minutes * 60 * 1000L
+                }
+            }
+        }
+    }
 
     fun toggleTimer() {
         if (_isRunning.value) {
@@ -53,15 +67,20 @@ class FocusViewModel @Inject constructor(
 
     fun resetTimer() {
         stopTimer()
-        _timeLeft.value = 25 * 60 * 1000L
+        viewModelScope.launch {
+            val minutes = preferenceManager.pomodoroDuration.first()
+            _timeLeft.value = minutes * 60 * 1000L
+        }
     }
 
     private fun onTimerFinished() {
         stopTimer()
         viewModelScope.launch {
+            val minutes = preferenceManager.pomodoroDuration.first()
+            val duration = minutes * 60 * 1000L
             val session = FocusSession(
                 id = UUID.randomUUID().toString(),
-                duration = 25 * 60 * 1000L,
+                duration = duration,
                 mode = "work",
                 date = System.currentTimeMillis(),
                 createdAt = System.currentTimeMillis()

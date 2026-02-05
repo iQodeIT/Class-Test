@@ -21,10 +21,10 @@ class DashboardViewModel @Inject constructor(
     val energyLevel = preferenceManager.energyLevel
 
     val activeTasks = energyLevel.flatMapLatest { level ->
-        dao.getActiveTasks().map { tasks ->
-            tasks.filter { it.energy == level }
-        }
+        dao.getActiveTasksByEnergy(level)
     }
+
+    val allActiveTasks = dao.getActiveTasks()
 
     val todayTasks = dao.getAllTasks().map { tasks ->
         val today = System.currentTimeMillis() // Simple today check, should ideally be start/end of day
@@ -54,7 +54,9 @@ class DashboardViewModel @Inject constructor(
     val averageVelocity = velocity.map { it.average().toFloat() }
 
     fun toggleEnergy() {
-        preferenceManager.toggleEnergy()
+        viewModelScope.launch {
+            preferenceManager.toggleEnergy()
+        }
     }
 
     fun completeTask(task: Task) {

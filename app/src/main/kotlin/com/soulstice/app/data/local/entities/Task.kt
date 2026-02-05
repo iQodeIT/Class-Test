@@ -2,7 +2,9 @@ package com.soulstice.app.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "tasks")
 data class Task(
     @PrimaryKey val id: String,

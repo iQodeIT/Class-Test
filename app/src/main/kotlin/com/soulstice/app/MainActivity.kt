@@ -3,6 +3,7 @@ package com.soulstice.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -22,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulstice.app.ui.screens.*
 import com.soulstice.app.ui.theme.*
 import com.soulstice.app.ui.viewmodel.InboxViewModel
+import com.soulstice.app.ui.viewmodel.MainViewModel
 import com.soulstice.app.ui.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,7 +32,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SoulsticeTheme {
+            val viewModel: MainViewModel = hiltViewModel()
+            val theme by viewModel.theme.collectAsState(initial = "Light")
+            val isDark = when (theme) {
+                "Dark" -> true
+                "Light" -> false
+                else -> isSystemInDarkTheme()
+            }
+            SoulsticeTheme(darkTheme = isDark) {
                 MainScreen()
             }
         }

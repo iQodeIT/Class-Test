@@ -2,6 +2,8 @@ package com.soulstice.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
@@ -15,16 +17,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulstice.app.ui.components.SoulsticeButton
 import com.soulstice.app.ui.components.SoulsticeCard
+import androidx.compose.ui.unit.sp
 import com.soulstice.app.ui.components.SoulsticeInput
 import com.soulstice.app.ui.theme.*
+import com.soulstice.app.ui.viewmodel.DashboardViewModel
+import com.soulstice.app.ui.viewmodel.InboxViewModel
 import com.soulstice.app.ui.viewmodel.JournalViewModel
 
 @Composable
 fun ReviewScreen(
-    viewModel: JournalViewModel = hiltViewModel()
+    journalViewModel: JournalViewModel = hiltViewModel(),
+    dashboardViewModel: DashboardViewModel = hiltViewModel(),
+    inboxViewModel: InboxViewModel = hiltViewModel()
 ) {
     var step by remember { mutableIntStateOf(1) }
     var reflection by remember { mutableStateOf("") }
+    val incompleteTasks by dashboardViewModel.allActiveTasks.collectAsState(initial = emptyList())
+    val inboxItems by inboxViewModel.inboxItems.collectAsState(initial = emptyList())
 
     Column(
         modifier = Modifier
@@ -43,19 +52,30 @@ fun ReviewScreen(
         when (step) {
             1 -> {
                 Text("1. Task Rollover", style = MaterialTheme.typography.headlineLarge, color = Taupe900)
-                Text("3 tasks were not completed. Move them to tomorrow?", color = Taupe500, modifier = Modifier.padding(top = 8.dp))
+                Text("${incompleteTasks.size} tasks were not completed. Move them to tomorrow?", color = Taupe500, modifier = Modifier.padding(top = 8.dp))
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    RolloverTaskItem("Refactor Soulstice DAL")
-                    RolloverTaskItem("Write documentation")
-                    RolloverTaskItem("Call client for feedback")
+                if (incompleteTasks.isEmpty()) {
+                    Text("All tasks completed! Great job.", color = Sage500)
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(incompleteTasks) { task ->
+                            RolloverTaskItem(task.title)
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                SoulsticeButton(text = "Rollover All", onClick = { step = 2 }, modifier = Modifier.fillMaxWidth())
+                SoulsticeButton(
+                    text = if (incompleteTasks.isEmpty()) "Continue" else "Rollover All",
+                    onClick = { step = 2 },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             2 -> {
                 Text("2. Inbox Zero", style = MaterialTheme.typography.headlineLarge, color = Taupe900)
@@ -65,9 +85,11 @@ fun ReviewScreen(
 
                 SoulsticeCard(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("📬 2 items in Inbox", style = MaterialTheme.typography.titleLarge, color = Taupe900)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        SoulsticeButton(text = "Process Inbox", onClick = { /* Navigate to Inbox */ }, variant = "outline")
+                        Text("📬 ${inboxItems.size} items in Inbox", style = MaterialTheme.typography.titleLarge, color = Taupe900)
+                        if (inboxItems.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Process them in the Inbox screen.", color = Taupe500, fontSize = 14.sp)
+                        }
                     }
                 }
 
@@ -96,7 +118,7 @@ fun ReviewScreen(
                     SoulsticeButton(text = "Back", onClick = { step = 2 }, variant = "outline", modifier = Modifier.weight(1f))
                     SoulsticeButton(text = "Complete Shutdown", onClick = {
                         if (reflection.isNotBlank()) {
-                            viewModel.addEntry(reflection, isWin = true)
+                            journalViewModel.addEntry(reflection, isWin = true)
                         }
                         step = 4
                     }, modifier = Modifier.weight(1f))

@@ -29,7 +29,7 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
     habitViewModel: HabitViewModel = hiltViewModel()
 ) {
-    val energyLevel by viewModel.energyLevel.collectAsState()
+    val energyLevel by viewModel.energyLevel.collectAsState(initial = "high")
     val activeTasks by viewModel.activeTasks.collectAsState(initial = emptyList())
     val todayTasks by viewModel.todayTasks.collectAsState(initial = emptyList())
     val incubatorIdeas by viewModel.incubatorIdeas.collectAsState(initial = emptyList())

@@ -17,8 +17,8 @@ import com.soulstice.app.ui.viewmodel.SettingsViewModel
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val pomodoroDuration by viewModel.pomodoroDuration.collectAsState()
-    val theme by viewModel.theme.collectAsState()
+    val pomodoroDuration by viewModel.pomodoroDuration.collectAsState(initial = 25)
+    val theme by viewModel.theme.collectAsState(initial = "Light")
 
     Column(
         modifier = Modifier
@@ -65,15 +65,15 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         SoulsticeButton(
-            text = "Export Data (JSON)",
-            onClick = { /* Placeholder */ },
+            text = "Export Data (Logcat)",
+            onClick = { viewModel.exportData() },
             variant = "outline",
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
         SoulsticeButton(
-            text = "Import Data (JSON)",
-            onClick = { /* Placeholder */ },
+            text = "Import Data (Sample)",
+            onClick = { viewModel.importData("{}") },
             variant = "outline",
             modifier = Modifier.fillMaxWidth()
         )

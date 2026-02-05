@@ -9,6 +9,9 @@ interface SoulsticeDao {
     @Query("SELECT * FROM tasks WHERE status != 'done' AND type = 'task' ORDER BY createdAt DESC")
     fun getActiveTasks(): Flow<List<Task>>
 
+    @Query("SELECT * FROM tasks WHERE status != 'done' AND type = 'task' AND energy = :energy ORDER BY createdAt DESC")
+    fun getActiveTasksByEnergy(energy: String): Flow<List<Task>>
+
     @Query("SELECT * FROM tasks WHERE type = :type ORDER BY createdAt DESC")
     fun getTasksByType(type: String): Flow<List<Task>>
 
@@ -104,4 +107,44 @@ interface SoulsticeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFocusSession(session: FocusSession)
+
+    @Query("DELETE FROM tasks")
+    suspend fun clearTasks()
+
+    @Query("DELETE FROM projects")
+    suspend fun clearProjects()
+
+    @Query("DELETE FROM habits")
+    suspend fun clearHabits()
+
+    @Query("DELETE FROM habit_completions")
+    suspend fun clearHabitCompletions()
+
+    @Query("DELETE FROM resources")
+    suspend fun clearResources()
+
+    @Query("DELETE FROM clients")
+    suspend fun clearClients()
+
+    @Query("DELETE FROM journal_entries")
+    suspend fun clearJournalEntries()
+
+    @Query("DELETE FROM inbox_items")
+    suspend fun clearInboxItems()
+
+    @Query("DELETE FROM focus_sessions")
+    suspend fun clearFocusSessions()
+
+    @Transaction
+    suspend fun nukeDatabase() {
+        clearTasks()
+        clearProjects()
+        clearHabits()
+        clearHabitCompletions()
+        clearResources()
+        clearClients()
+        clearJournalEntries()
+        clearInboxItems()
+        clearFocusSessions()
+    }
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJANWFu9q9H7jnMA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEG
+            C1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzEQMA4GA1UECgwHR29vZ2xl
+            MRcwFQYDVQQLDA5BbmRyb2lkIERldmljZXMxFzAVBgNVBAMMDkFuZHJvaWQgRGV2aWNlczAeFw0w
+            ODA0MTUyMzM2NTZaFw0zNTA5MDEyMzM2NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGC1UECAwKQ2Fs
+            aWZvcm5pYTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzEQMA4GA1UECgwHR29vZ2xlMRcwFQYDVQQL
+            DA5BbmRyb2lkIERldmljZXMxFzAVBgNVBAMMDkFuZHJvaWQgRGV2aWNlczCCASIwDQYJKoZIhvcN
+            AQEBBQADggEPADCCAQOCggEBAL9u7uR4Kx6UAs/4YQ6iXj0I90h8079z6Gz1Yv8UfXU5oV9p5f26
+            A86fH6A6N7fX6U8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8wIDAQABo3sweTAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUL9W
+            p19S1IAt96G4P6Hk5T6n7k98wHwYDVR0jBBgwFoAUL9Wp19S1IAt96G4P6Hk5T6n7k98wDQYJKoZI
+            hvcNAQEFBQADggEBAL9u7uR4Kx6UAs/4YQ6iXj0I90h8079z6Gz1Yv8UfXU5oV9p5f26A86fH6A6
+            N7fX6U8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8=
+        </item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJANWFu9q9H7jnMA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEG
+            C1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzEQMA4GA1UECgwHR29vZ2xl
+            MRcwFQYDVQQLDA5BbmRyb2lkIERldmljZXMxFzAVBgNVBAMMDkFuZHJvaWQgRGV2aWNlczAeFw0w
+            ODA0MTUyMzM2NTZaFw0zNTA5MDEyMzM2NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGC1UECAwKQ2Fs
+            aWZvcm5pYTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzEQMA4GA1UECgwHR29vZ2xlMRcwFQYDVQQL
+            DA5BbmRyb2lkIERldmljZXMxFzAVBgNVBAMMDkFuZHJvaWQgRGV2aWNlczCCASIwDQYJKoZIhvcN
+            AQEBBQADggEPADCCAQOCggEBAL9u7uR4Kx6UAs/4YQ6iXj0I90h8079z6Gz1Yv8UfXU5oV9p5f26
+            A86fH6A6N7fX6U8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8wIDAQABo3sweTAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUL9W
+            p19S1IAt96G4P6Hk5T6n7k98wHwYDVR0jBBgwFoAUL9Wp19S1IAt96G4P6Hk5T6n7k98wDQYJKoZI
+            hvcNAQEFBQADggEBAL9u7uR4Kx6UAs/4YQ6iXj0I90h8079z6Gz1Yv8UfXU5oV9p5f26A86fH6A6
+            N7fX6U8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m8m
+            8m8m8m8=
+        </item>
+    </string-array>
+</resources>

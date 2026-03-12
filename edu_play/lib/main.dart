@@ -1,39 +1,86 @@
-import 'package:edu_play/screens/onboarding_screen.dart';
+import 'package:edu_play/models/project.dart';
+import 'package:edu_play/screens/analyzing_screen.dart';
+import 'package:edu_play/screens/dashboard_screen.dart';
+import 'package:edu_play/screens/editor_screen.dart';
+import 'package:edu_play/screens/export_screen.dart';
+import 'package:edu_play/services/project_provider.dart';
+import 'package:edu_play/utils/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register Adapters
+  Hive.registerAdapter(ProjectAdapter());
+  Hive.registerAdapter(TranscriptionWordAdapter());
+  Hive.registerAdapter(AspectRatioTypeAdapter());
+
+  final projectProvider = ProjectProvider();
+  await projectProvider.init();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: projectProvider),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EduPlay',
-      theme: ThemeData(
-        // Define the default brightness and colors.
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3B82F6), // Primary: Sky Blue
-          primary: const Color(0xFF3B82F6),
-          secondary: const Color(0xFFFACC15), // Accent: Warm Yellow
-          error: const Color(0xFFF87171), // Secondary: Coral Red
-          // Other colors can be defined here as needed
-        ),
-
-        // Define the default font family.
-        textTheme: GoogleFonts.nunitoTextTheme(
-          Theme.of(context).textTheme,
-        ),
-
-        // Use Material 3 design.
-        useMaterial3: true,
-      ),
-      home: const OnboardingScreen(),
+      title: 'LinguaClip',
+      theme: AppTheme.darkTheme,
+      home: const DashboardScreen(),
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: (settings) {
+        if (settings.name == '/analyzing') {
+          final project = settings.arguments as Project;
+          return MaterialPageRoute(builder: (_) => AnalyzingScreen(project: project));
+        }
+        if (settings.name == '/editor') {
+          final project = settings.arguments as Project;
+          return MaterialPageRoute(builder: (_) => EditorScreen(project: project));
+        }
+        if (settings.name == '/export') {
+          final project = settings.arguments as Project;
+          return MaterialPageRoute(builder: (_) => ExportScreen(project: project));
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class PlaceholderScreen extends StatelessWidget {
+  const PlaceholderScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'LINGUACLIP',
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(color: AppTheme.linguaGold),
+          ],
+        ),
+      ),
     );
   }
 }

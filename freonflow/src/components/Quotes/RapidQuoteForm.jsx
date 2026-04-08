@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Plus, Sparkles, Save, ArrowLeft } from 'lucide-react';
+import { Trash2, Plus, Sparkles, Save, ArrowLeft, ChevronRight } from 'lucide-react';
 import { parseJobDescription } from '../../utils/ai-parser';
 
 const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
@@ -57,16 +57,21 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
         <h2 className="text-sm font-black uppercase tracking-widest text-gray-500 mb-2">Section A: Client</h2>
         {!showNewClient ? (
           <div className="flex flex-col gap-2">
-            <select
-              className="input-field"
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-            >
-              <option value="">Select Existing Client</option>
-              {initialClients.map(c => (
-                <option key={c.id} value={c.id}>{c.full_name}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                className="input-field appearance-none"
+                value={clientId}
+                onChange={(e) => setClientId(e.target.value)}
+              >
+                <option value="">Select Existing Client</option>
+                {initialClients.map(c => (
+                  <option key={c.id} value={c.id}>{c.full_name}</option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400">
+                <ChevronRight size={20} className="rotate-90" />
+              </div>
+            </div>
             <button
               onClick={() => setShowNewClient(true)}
               className="text-hvac-blue font-bold text-left px-2"

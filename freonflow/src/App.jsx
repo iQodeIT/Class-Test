@@ -7,10 +7,28 @@ import QuoteView from './components/Quotes/QuoteView';
 function App() {
   const [view, setView] = useState('dashboard'); // 'dashboard', 'form', 'view'
   const [selectedQuote, setSelectedQuote] = useState(null);
-  const [quotes, setQuotes] = useState([
-    { id: 101, client_name: 'John Smith', date: '2023-10-24', total_amount: 425.00, status: 'sent', items: [] },
-    { id: 102, client_name: 'Jane Doe', date: '2023-10-23', total_amount: 1250.00, status: 'approved', items: [] },
-  ]);
+  const [quotes, setQuotes] = useState(() => {
+    const saved = localStorage.getItem('freonflow_quotes');
+    return saved ? JSON.parse(saved) : [
+      { id: 101, client_name: 'John Smith', date: '2023-10-24', total_amount: 425.00, status: 'sent', items: [] },
+      { id: 102, client_name: 'Jane Doe', date: '2023-10-23', total_amount: 1250.00, status: 'approved', items: [] },
+    ];
+  });
+
+  // Local Storage persistence
+  useEffect(() => {
+    localStorage.setItem('freonflow_quotes', JSON.stringify(quotes));
+  }, [quotes]);
+
+  // Online Sync Mock
+  useEffect(() => {
+    const handleOnline = () => {
+      console.log("Back online! Syncing data to Supabase...");
+      // Logic to find 'draft' or unsynced quotes and push to Supabase
+    };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [quotes]);
 
   const handleCreateQuote = () => {
     setView('form');

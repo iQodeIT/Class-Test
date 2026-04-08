@@ -1,0 +1,21 @@
+{
+  "name": "FreonFlow Estimates",
+  "short_name": "FreonFlow",
+  "description": "Rapid HVAC estimates for solo technicians",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "https://lucide.dev/api/icons/wind?color=0284c7&size=192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lucide.dev/api/icons/wind?color=0284c7&size=512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

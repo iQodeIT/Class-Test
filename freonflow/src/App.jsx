@@ -6,9 +6,10 @@ import Dashboard from './components/Dashboard/Dashboard';
 import RapidQuoteForm from './components/Quotes/RapidQuoteForm';
 import QuoteView from './components/Quotes/QuoteView';
 import Settings from './components/Dashboard/Settings';
+import ClientManager from './components/Clients/ClientManager';
 
 function App() {
-  const [view, setView] = useState('dashboard'); // 'dashboard', 'form', 'view', 'settings'
+  const [view, setView] = useState('dashboard'); // 'dashboard', 'form', 'view', 'settings', 'clients'
   const [selectedQuote, setSelectedQuote] = useState(null);
   const [profile, setProfile] = useState(null);
   const [clients, setClients] = useState([]);
@@ -85,15 +86,41 @@ function App() {
     window.history.pushState({ view: 'form' }, '');
   };
 
+  const handleAddClient = async (clientData) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data: client, error } = await supabase
+        .from('clients')
+        .insert({
+          user_id: user.id,
+          full_name: clientData.full_name,
+          address: clientData.address,
+          phone: clientData.phone
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      setClients([client, ...clients]);
+      return true;
+    } catch (error) {
+      alert("Error adding client: " + error.message);
+      return false;
+    }
+  };
+
   const handleSaveQuote = async (quoteData, isSyncing = false) => {
     try {
       if (!navigator.onLine && !isSyncing) {
+        const tempId = Date.now();
         const pending = JSON.parse(localStorage.getItem('freonflow_pending_quotes') || '[]');
-        localStorage.setItem('freonflow_pending_quotes', JSON.stringify([...pending, quoteData]));
+        localStorage.setItem('freonflow_pending_quotes', JSON.stringify([...pending, { ...quoteData, tempId }]));
 
         // Optimistic UI update
         const offlineQuote = {
-          id: Date.now(),
+          id: tempId,
           client_name: quoteData.newClient?.full_name || clients.find(c => c.id === quoteData.clientId)?.full_name || 'Client',
           items: quoteData.items,
           total_amount: quoteData.total,
@@ -101,7 +128,7 @@ function App() {
           date: new Date().toLocaleDateString(),
           is_offline: true
         };
-        setQuotes([offlineQuote, ...quotes]);
+        setQuotes(prev => [offlineQuote, ...prev]);
         setSelectedQuote(offlineQuote);
         setView('view');
         return true;
@@ -119,7 +146,8 @@ function App() {
           .insert({
             user_id: user.id,
             full_name: quoteData.newClient.full_name,
-            address: quoteData.newClient.address
+            address: quoteData.newClient.address,
+            phone: quoteData.newClient.phone
           })
           .select()
           .single();
@@ -163,14 +191,19 @@ function App() {
       // 4. Update UI State
       const savedQuote = {
         ...quote,
-        client_name: quoteData.newClient.full_name || clients.find(c => c.id === finalClientId)?.full_name || 'Client',
+        client_name: quoteData.newClient?.full_name || clients.find(c => c.id === finalClientId)?.full_name || 'Client',
         items: quoteData.items,
         date: new Date(quote.created_at).toLocaleDateString()
       };
 
-      setQuotes([savedQuote, ...quotes]);
+      if (isSyncing && quoteData.tempId) {
+        setQuotes(prev => [savedQuote, ...prev.filter(q => q.id !== quoteData.tempId)]);
+      } else {
+        setQuotes(prev => [savedQuote, ...prev]);
+      }
+
       setSelectedQuote(savedQuote);
-      setView('view');
+      if (!isSyncing) setView('view');
       return true;
     } catch (error) {
       console.error("Supabase Save Error:", error.message);
@@ -237,6 +270,14 @@ function App() {
         {view === 'settings' && (
           <Settings onBack={goBack} />
         )}
+
+        {view === 'clients' && (
+          <ClientManager
+            clients={clients}
+            onAddClient={handleAddClient}
+            onBack={goBack}
+          />
+        )}
       </main>
 
       {/* Bottom Tabs */}
@@ -248,6 +289,16 @@ function App() {
           >
             <Home size={24} />
             <span className="text-[10px] font-bold">Home</span>
+          </button>
+          <button
+            onClick={() => {
+              setView('clients');
+              window.history.pushState({ view: 'clients' }, '');
+            }}
+            className={`flex flex-col items-center gap-1 ${view === 'clients' ? 'text-hvac-blue' : 'text-zinc-400'}`}
+          >
+            <PlusSquare size={24} className="rotate-45" />
+            <span className="text-[10px] font-bold">Clients</span>
           </button>
           <button
             onClick={() => setView('form')}

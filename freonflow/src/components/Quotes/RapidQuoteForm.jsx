@@ -5,7 +5,7 @@ import { parseJobDescription } from '../../utils/ai-parser';
 const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
   const [clientId, setClientId] = useState('');
   const [showNewClient, setShowNewClient] = useState(false);
-  const [newClient, setNewClient] = useState({ full_name: '', address: '' });
+  const [newClient, setNewClient] = useState({ full_name: '', address: '', phone: '' });
   const [magicInput, setMagicInput] = useState('');
   const [items, setItems] = useState([{ id: 1, description: '', quantity: 1, unit_price: 0 }]);
   const [isParsing, setIsParsing] = useState(false);
@@ -87,6 +87,12 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
               placeholder="Client Name"
               value={newClient.full_name}
               onChange={(e) => setNewClient({...newClient, full_name: e.target.value})}
+            />
+            <input
+              className="input-field mb-2"
+              placeholder="Phone Number"
+              value={newClient.phone}
+              onChange={(e) => setNewClient({...newClient, phone: e.target.value})}
             />
             <input
               className="input-field mb-2"

@@ -113,7 +113,7 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
             disabled={isParsing || !magicInput}
             className="absolute bottom-3 right-3 bg-black text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 active:scale-95 disabled:opacity-50"
           >
-            {isParsing ? '...' : <><Sparkles size={18} /> PARSE</>}
+            {isParsing ? '...' : <><Sparkles size={18} /> MAGIC PARSE</>}
           </button>
         </div>
       </section>

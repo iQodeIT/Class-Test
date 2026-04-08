@@ -105,7 +105,7 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
 
       {/* Section B: Magic Input */}
       <section className="mb-8">
-        <h2 className="text-sm font-black uppercase tracking-widest text-gray-500 mb-2">Section B: Magic Input</h2>
+        <h2 className="text-sm font-black uppercase tracking-widest text-zinc-500 mb-2">Job Brain Dump</h2>
         <div className="relative">
           <textarea
             className="input-field min-h-[120px] pt-4"
@@ -116,9 +116,13 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
           <button
             onClick={handleMagicParse}
             disabled={isParsing || !magicInput}
-            className="absolute bottom-3 right-3 bg-black text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 active:scale-95 disabled:opacity-50"
+            className="absolute bottom-3 right-3 bg-zinc-950 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 active:scale-95 disabled:opacity-50 transition-all shadow-lg"
           >
-            {isParsing ? '...' : <><Sparkles size={18} /> MAGIC PARSE</>}
+            {isParsing ? (
+              <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+            ) : (
+              <>✨ Magic Parse</>
+            )}
           </button>
         </div>
       </section>

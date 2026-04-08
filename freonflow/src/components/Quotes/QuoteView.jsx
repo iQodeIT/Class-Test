@@ -1,5 +1,6 @@
 import React from 'react';
 import { Share2, ArrowLeft, Download, Send } from 'lucide-react';
+import { generatePDF } from '../../utils/pdf-generator';
 
 const QuoteView = ({ quote, onBack }) => {
   const handleShare = async () => {
@@ -18,9 +19,13 @@ const QuoteView = ({ quote, onBack }) => {
     }
   };
 
+  const handleDownload = () => {
+    generatePDF('invoice-capture', `Quote_${quote.client_name.replace(/\s+/g, '_')}`);
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen pb-24">
-      <div className="bg-white p-4 border-b-2 border-black flex justify-between items-center sticky top-0">
+    <div className="bg-gray-100 min-h-screen pb-24" id="invoice-capture">
+      <nav className="bg-white p-4 border-b-2 border-black flex justify-between items-center sticky top-0">
         <button onClick={onBack} className="p-2 active:bg-gray-100 rounded-full">
           <ArrowLeft size={24} />
         </button>
@@ -28,7 +33,7 @@ const QuoteView = ({ quote, onBack }) => {
         <button onClick={handleShare} className="p-2 active:bg-gray-100 rounded-full text-hvac-blue">
           <Share2 size={24} />
         </button>
-      </div>
+      </nav>
 
       <div className="p-4">
         {/* The "Paper" Invoice */}
@@ -45,7 +50,7 @@ const QuoteView = ({ quote, onBack }) => {
             </div>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-8 text-right">
             <h4 className="text-[10px] font-black uppercase text-gray-400 mb-1">Bill To:</h4>
             <p className="font-bold text-lg leading-tight">{quote.client_name}</p>
             <p className="text-sm text-gray-600 italic">{quote.address || 'Service Address on File'}</p>
@@ -86,7 +91,7 @@ const QuoteView = ({ quote, onBack }) => {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t-2 border-black grid grid-cols-2 gap-4">
-        <button className="btn-secondary">
+        <button onClick={handleDownload} className="btn-secondary">
           <Download size={20} className="mr-2" /> PDF
         </button>
         <button onClick={handleShare} className="btn-primary">

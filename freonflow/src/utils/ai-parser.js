@@ -7,7 +7,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 
-const SYSTEM_PROMPT = `You are an HVAC office assistant. Extract parts, quantities, and estimated prices from this messy technician note. Return ONLY a JSON array of objects with the keys: description, quantity, and unit_price.`;
+const SYSTEM_PROMPT = `You are an expert HVAC service assistant. Your task is to extract parts, quantities, and unit prices from unstructured technician notes.
+Output MUST be a strictly valid JSON array of objects with exactly these keys: "description" (string), "quantity" (number), and "unit_price" (number).
+Do not include any conversational text, markdown formatting outside the JSON, or other explanations.`;
 
 export const parseJobDescription = async (text) => {
   console.log("Parsing job description with Gemini API:", text);

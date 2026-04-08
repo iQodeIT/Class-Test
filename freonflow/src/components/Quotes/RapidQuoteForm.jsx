@@ -9,6 +9,7 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
   const [magicInput, setMagicInput] = useState('');
   const [items, setItems] = useState([{ id: 1, description: '', quantity: 1, unit_price: 0 }]);
   const [isParsing, setIsParsing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const total = items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
 
@@ -181,10 +182,19 @@ const RapidQuoteForm = ({ onSave, onBack, initialClients = [] }) => {
           <p className="text-3xl font-black">${total.toFixed(2)}</p>
         </div>
         <button
-          onClick={() => onSave({ clientId, newClient, items, total })}
-          className="btn-primary h-14 px-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+          onClick={async () => {
+            setIsSaving(true);
+            const success = await onSave({ clientId, newClient, items, total });
+            if (!success) setIsSaving(false);
+          }}
+          disabled={isSaving || isParsing || (!clientId && !newClient.full_name)}
+          className="btn-primary h-14 px-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center disabled:opacity-50"
         >
-          <Save size={24} className="mr-2" /> SAVE
+          {isSaving ? (
+            <div className="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
+          ) : (
+            <><Save size={24} className="mr-2" /> SAVE</>
+          )}
         </button>
       </div>
     </div>

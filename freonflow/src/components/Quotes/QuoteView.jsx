@@ -2,7 +2,7 @@ import React from 'react';
 import { Share2, ArrowLeft, Download, Send } from 'lucide-react';
 import { generatePDF } from '../../utils/pdf-generator';
 
-const QuoteView = ({ quote, onBack }) => {
+const QuoteView = ({ quote, profile, onBack }) => {
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -40,8 +40,12 @@ const QuoteView = ({ quote, onBack }) => {
         <div className="bg-white border-2 border-black p-6 shadow-lg min-h-[600px] flex flex-col">
           <div className="flex justify-between items-start mb-8">
             <div>
-              <h2 className="text-2xl font-black text-hvac-blue">FreonFlow</h2>
-              <p className="text-xs font-bold uppercase">Estimates & Service</p>
+              <h2 className="text-2xl font-black text-hvac-blue leading-tight">
+                {profile?.company_name || 'FreonFlow'}
+              </h2>
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                {profile?.phone_number || 'Estimates & Service'}
+              </p>
             </div>
             <div className="text-right">
               <h3 className="text-xl font-black uppercase">Estimate</h3>
